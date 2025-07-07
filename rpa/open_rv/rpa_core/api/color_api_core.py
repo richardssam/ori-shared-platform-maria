@@ -3,10 +3,14 @@ from OpenGL.GL import shaders as glShaders
 from OpenGL import GL
 from rv import commands as rvc
 from rv import extra_commands as rve
-from PySide2 import QtCore
+try:
+    from PySide2 import QtCore
+except ImportError:
+    from PySide6 import QtCore
 from rpa.open_rv.rpa_core.api.utils import itview_to_rv
 from rpa.session_state.color_corrections import ColorTimer, Grade
 import struct
+import platform
 
 
 BLUR_SHADER = """
@@ -165,6 +169,9 @@ class ColorApiCore(QtCore.QObject):
         self.__ssbo = None
         self.__textures = []
 
+        if platform.system() == "Darwin":
+            # Dont setup the shaders if we are on OSX, we need to get them re-written :(
+            return
         blur_shader = glShaders.compileShader(
             BLUR_SHADER, GL.GL_FRAGMENT_SHADER)
         self.__blur_shader_program = glShaders.compileProgram(

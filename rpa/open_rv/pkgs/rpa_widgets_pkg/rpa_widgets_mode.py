@@ -1,5 +1,8 @@
 import os
-from PySide2 import QtCore, QtWidgets
+try:
+    from PySide2 import QtCore, QtWidgets
+except ImportError:
+    from PySide6 import QtCore, QtWidgets
 from rv import rvtypes
 import rv.qtutils
 import platform
@@ -374,7 +377,7 @@ def create_config(main_window):
 def create_logger():
     if platform.system() == 'Windows':
         log_dir = os.path.join(os.environ["APPDATA"], "itview")
-    elif platform.system() == 'Linux':
+    elif platform.system() == 'Linux' or platform.system() == 'Darwin':
         log_dir = os.path.join(os.environ["HOME"], ".itview")
     else:
         raise Exception("Unsupported platform!")
